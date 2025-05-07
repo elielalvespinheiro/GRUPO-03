@@ -1,39 +1,63 @@
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
-dados = pd.read_csv(r"C:\Users\eliel\Desktop\grupo03\Arquivo-trabalho\Documento-Limpo-grupo03.csv", delimiter=",")
 
-# Agrupar por Ano e Produto e somar a área plantada
-area_por_ano_produto = dados.groupby(['Ano', 'Produto'])['ÁreaPlantada (ha)'].sum().reset_index()
-print(area_por_ano_produto)
+df = pd.read_csv('Documento-Limpo-grupo03.csv', sep=";", decimal=",")
 
-# Calcular a diferença entre a área plantada e a área colhida
-dados['Diferença (ha)'] = dados['Área Plantada (ha)'] - dados['ÁreaColhida (ha)']
+    # Substituir vírgulas por pontos e converter colunas numéricas
+df = df.replace(',', '.', regex=True)
 
-# Agrupar por Produto e calcular a média da diferença
-diferenca_por_produto = dados.groupby(['Produto'])['Diferença(ha)'].mean().reset_index()
+colunas_numericas = [
+    'Temp. Ins. (C)', 'Temp. Max. (C)', 'Temp. Min. (C)',
+    'Umi. Ins. (%)', 'Umi. Max. (%)', 'Umi. Min. (%)'
+]
 
-# Encontrar o produto com a menor diferença média (maior índice decolheita)
-produto_maior_indice_colheita = diferenca_por_produto.loc[diferenca_por_produto['Diferença (ha)'].idxmin(), 'Produto']
+for col in colunas_numericas:
+    df[col] = pd.to_numeric(df[col], errors='coerce')
 
-# Filtrar apenas os dados de 2024 para a cidade de Manaus
-dados_manaus_2024 = dados[(dados['Ano'] == 2024) &(dados['Município'].str.lower() == 'manaus')]
+df['Data'] = df['Data'].astype(str)
+df['Hora (UTC)'] = df['Hora (UTC)'].astype(str).str.zfill(4)
+df['Data_Hora'] = pd.to_datetime(df['Data'] + ' ' + df['Hora (UTC)'], format='%d/%m/%Y %H%M')
+df['Hora'] = df['Data_Hora'].dt.hour
 
-soma_area_plantada_manaus_2024 = dados_manaus_2024['Área Plantada(ha)'].sum()
+    # Agrupamentos
+media_por_hora_temperatura_ins = df.groupby('Hora')['Temp. Ins. (C)'].mean()
+media_por_hora_temperatura_max = df.groupby('Hora')['Temp. Max. (C)'].mean()
+media_por_hora_temperatura_min = df.groupby('Hora')['Temp. Min. (C)'].mean()
 
-for produto in zip(dados_manaus_2024['Ano'], dados_manaus_2024['Produto'],dados_manaus_2024['Área Plantada (ha)']):
-    print(f"Ano: {produto[0] } ---- Produto {produto[1]} ---- ÁreaPlantada {produto[2]}")
+mediaUmidadeIdeal = df.groupby('Hora')['Umi. Ins. (%)'].mean()
+mediaUmidadeMax = df.groupby('Hora')['Umi. Max. (%)'].mean()
+mediaUmidadeMin = df.groupby('Hora')['Umi. Min. (%)'].mean()
 
-print('----------------------------------------------------------')
-print(f"Total da Área Planata em 2024 na cidade de Manaus = {soma_area_plantada_manaus_2024.round(2)}")
+    # Gráfico com dois eixos Y
+fig, ax1 = plt.subplots(figsize=(14, 6))
 
-amplitude_geral = dados['Produção (ton)'].max() - dados['Produção(ton)'].min()
+    # Umidade (eixo Y da esquerda)
+ax1.plot(mediaUmidadeIdeal.index, mediaUmidadeIdeal, label='Umidade Inst.', color='blue', marker='o')
+ax1.plot(mediaUmidadeMax.index, mediaUmidadeMax, label='Umidade Máx.', color='green', marker='s')
+ax1.plot(mediaUmidadeMin.index, mediaUmidadeMin, label='Umidade Mín.', color='red', marker='x')
+ax1.axhline(y=65, color='red', linestyle='--', label='Limite Inf. (65%)')
+ax1.axhline(y=85, color='green', linestyle='--', label='Limite Sup. (85%)')
+ax1.set_ylabel('Umidade (%)', color='blue')
+ax1.set_ylim(0, 100)
+ax1.tick_params(axis='y', labelcolor='blue')
 
-# Calcular a amplitude por produto
-amplitude_por_produto = dados.groupby('Produto')['Produção (ton)'].agg(['max', 'min'])
-amplitude_por_produto['Amplitude'] = amplitude_por_produto['max'] -amplitude_por_produto['min']
+    # Temperatura (eixo Y da direita)
+ax2 = ax1.twinx()
+ax2.plot(media_por_hora_temperatura_ins.index, media_por_hora_temperatura_ins, label='Temp. Inst.', color='brown', linestyle='-')
+ax2.plot(media_por_hora_temperatura_max.index, media_por_hora_temperatura_max, label='Temp. Máx.', color='orange', linestyle='--')
+ax2.plot(media_por_hora_temperatura_min.index, media_por_hora_temperatura_min, label='Temp. Mín.', color='purple', linestyle='-.')
+ax2.set_ylabel('Temperatura (°C)', color='brown')
+ax2.tick_params(axis='y', labelcolor='brown')
 
-# Exibir os resultados
-print(f"Amplitude Geral da Produção: {amplitude_geral} ton\n")
-print("Amplitude de Produção por Produto:")
-print(amplitude_por_produto[['max', 'min', 'Amplitude']])
+    # Legendas
+lines_1, labels_1 = ax1.get_legend_handles_labels()
+lines_2, labels_2 = ax2.get_legend_handles_labels()
+ax1.legend(lines_1 + lines_2, labels_1 + labels_2, loc='upper center', ncol=3)
+
+plt.title('Variação de Umidade e Temperatura por Hora')
+plt.xlabel('Hora do Dia')
+plt.xticks(range(0, 31))
+plt.grid(True)
+plt.tight_layout()
+plt.show()
