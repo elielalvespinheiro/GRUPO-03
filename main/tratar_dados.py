@@ -1,7 +1,6 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 
-<<<<<<< HEAD
 caminho_csv = 'Documento-Limpo-grupo03.csv'
 
 # Importância: Temperaturas elevadas podem aquecer a água, 
@@ -55,39 +54,31 @@ def temperatura(arqui):
     plt.axhline(y=valor_minimo, color='red', linestyle=':', label='Temperatura Mínima Ideal')
 
     plt.plot(media_temp_min, label='Temp. Mínima', color='#FFD700')
-=======
-# Caminho do arquivo
-caminho_csv = 'Documento-Limpo-grupo03.csv'
 
-# Leitura do CSV
 df = pd.read_csv(caminho_csv, sep=';', decimal=',', encoding='utf-8')
 df = df.replace(',', '.', regex=True)
 
 def temperatura(arqui):
     df = pd.read_csv(arqui, sep=';', decimal=',', encoding='utf-8')
     df = df.replace(',', '.', regex=True)
-    # Converte colunas numéricas
+
     colunas_numericas = ['Temp. Ins. (C)', 'Temp. Max. (C)', 'Temp. Min. (C)']
     for col in colunas_numericas:
         df[col] = pd.to_numeric(df[col], errors='coerce')
 
-    # Criação da coluna datetime
     df['Data'] = df['Data'].astype(str)
     df['Hora (UTC)'] = df['Hora (UTC)'].astype(str).str.zfill(4)
     df['Data_Hora'] = pd.to_datetime(df['Data'] + ' ' + df['Hora (UTC)'], format='%d/%m/%Y %H%M', errors='coerce')
     df['Mes'] = df['Data_Hora'].dt.day
 
-    meses_desejados = [6]  # Altere para o mês que quiser (1 = janeiro, 12 = dezembro)
+    meses_desejados = [6] 
 
-    # Filtrar apenas os dados do mês escolhido
     df = df[(df['Data_Hora'].dt.month.isin(meses_desejados)) & (df['Data_Hora'].dt.day <= 30)]
 
-    # Calcula as médias
     media_temp_ins = df.groupby('Mes')["Temp. Ins. (C)"].mean()
     media_temp_max = df.groupby('Mes')["Temp. Max. (C)"].mean()
     media_temp_min = df.groupby('Mes')["Temp. Min. (C)"].mean()
 
-    # Gráfico de linhas com as 3 temperaturas ao longo do tempo
     plt.figure(figsize=(10, 6))
 
     plt.plot(media_temp_ins, label='Temp. Instantânea', color='skyblue')
@@ -101,7 +92,7 @@ def temperatura(arqui):
     plt.axhline(y=valor_minimo, color='red', linestyle=':', label='Temperatura Mínima Ideal')
 
     plt.plot(media_temp_min, label='Temp. Mínima', color='lightgreen')
->>>>>>> e1142c46a1c3bcc187c40051349bab7026db4c1a
+
 
     plt.title('Temperaturas ao Longo do Tempo - Junho')
     plt.xlabel('Dias capturados')
@@ -110,75 +101,36 @@ def temperatura(arqui):
     plt.grid(True)
     plt.tight_layout()
     plt.xticks(range(1, 32))
-
-<<<<<<< HEAD
     plt.tight_layout()
     plt.show()
 
-=======
-    # Gira os rótulos do eixo x para melhor visualização
-    plt.tight_layout()
-    plt.show()
-
-    # if(valor_maximo >= 38):
-    #     print('O peixe terá redução no apetite e ocasionalmente morrerá')
-    # elif(valor_minimo <= 20):
-    #     print('O peixe deixará de se alimentar bem e seu crescimento diminuirá')
-    # elif(valor_minimo <=14):
-    #     print('O peixe terá um crescimento muito lento e baixa tolerância ao manuseio e ás doenças')
-
->>>>>>> e1142c46a1c3bcc187c40051349bab7026db4c1a
 def umidade(arqui):
     df = pd.read_csv(arqui, sep=';', decimal=',', encoding='utf-8')
     df = df.replace(',', '.', regex=True)
-
-<<<<<<< HEAD
-=======
-    # Converte colunas numéricas
->>>>>>> e1142c46a1c3bcc187c40051349bab7026db4c1a
+    
     colunas_umidade = ['Umi. Ins. (%)', 'Umi. Max. (%)', 'Umi. Min. (%)']
     for col in colunas_umidade:
         df[col] = pd.to_numeric(df[col], errors='coerce')
 
-<<<<<<< HEAD
-=======
-    # Criação da coluna datetime
->>>>>>> e1142c46a1c3bcc187c40051349bab7026db4c1a
     df['Data'] = df['Data'].astype(str)
     df['Hora (UTC)'] = df['Hora (UTC)'].astype(str).str.zfill(4)
     df['Data_Hora'] = pd.to_datetime(df['Data'] + ' ' + df['Hora (UTC)'], format='%d/%m/%Y %H%M', errors='coerce')
     df['Dia'] = df['Data_Hora'].dt.day
     df['Mes'] = df['Data_Hora'].dt.month
 
-<<<<<<< HEAD
-    meses_desejados = [6] 
-    df = df[df['Mes'].isin(meses_desejados)]
-
-    df['Mes-Dia'] = df['Data_Hora'].dt.strftime('%m-%d')
-
-    media_ur_ins = df.groupby('Mes-Dia')["Umi. Ins. (%)"].mean()
-    media_ur_max = df.groupby('Mes-Dia')["Umi. Max. (%)"].mean() 
-    media_ur_min = df.groupby('Mes-Dia')["Umi. Min. (%)"].mean() 
-
-=======
-    # Filtra apenas o mês desejado
-    mes_desejado = 6  # Junho
+    mes_desejado = 6  
     df = df[(df['Mes'] == mes_desejado) & (df['Dia'] <= 30)]
 
-    # Agrupamento por dia e cálculo das médias em porcentagem
     media_ur_ins = df.groupby('Dia')["Umi. Ins. (%)"].mean()
     media_ur_max = df.groupby('Dia')["Umi. Max. (%)"].mean() 
     media_ur_min = df.groupby('Dia')["Umi. Min. (%)"].mean() 
 
-  # Junta os dados em um DataFrame para plotagem
->>>>>>> e1142c46a1c3bcc187c40051349bab7026db4c1a
     df_umidade = pd.DataFrame({
         'UR Instantânea': media_ur_ins,
         'UR Máxima': media_ur_max,
         'UR Mínima': media_ur_min
     })
 
-<<<<<<< HEAD
     ax = df_umidade.plot(kind='line', figsize=(12, 6), color=['dodgerblue', 'green', 'red'], linewidth=2)
 
     valor_maximo = 58
@@ -193,23 +145,7 @@ def umidade(arqui):
     ax.set_xticklabels(df_umidade.index, rotation=90)
     ax.legend()
     ax.grid(True)
-=======
-    # Gráfico
-    valor_maximo = 30
-    valor_minimo = 26
-    plt.axhline(y=valor_maximo, color='green', linestyle='--', label='Ponto Máximo Ideal')
-    plt.axhline(y=valor_minimo, color='red', linestyle=':', label='Ponto Mínimo Ideal')
 
-    df_umidade.plot(kind='area', figsize=(10, 6), color=['dodgerblue', 'green', 'red'], alpha=0.5)
-
-    plt.title('Umidade Relativa do Ar - Junho')
-    plt.xlabel('Dia do mês')
-    plt.ylabel('Umidade (%)')
-    plt.legend()
-    plt.grid(True)
-
-    plt.xticks(range(1, 32))
->>>>>>> e1142c46a1c3bcc187c40051349bab7026db4c1a
     plt.tight_layout()
     plt.show()
 
@@ -217,10 +153,6 @@ def orvalho(arqui):
     df = pd.read_csv(arqui, sep=';', decimal=',', encoding='utf-8')
     df = df.replace(',', '.', regex=True)
 
-<<<<<<< HEAD
-=======
-    # Colunas do ponto de orvalho
->>>>>>> e1142c46a1c3bcc187c40051349bab7026db4c1a
     colunas_orvalho = ['Pto Orvalho Ins. (C)', 'Pto Orvalho Max. (C)', 'Pto Orvalho Min. (C)']
     for col in colunas_orvalho:
         df[col] = pd.to_numeric(df[col], errors='coerce')
@@ -229,78 +161,35 @@ def orvalho(arqui):
     df['Hora (UTC)'] = df['Hora (UTC)'].astype(str).str.zfill(4)
     df['Data_Hora'] = pd.to_datetime(df['Data'] + ' ' + df['Hora (UTC)'], format='%d/%m/%Y %H%M', errors='coerce')
     
-<<<<<<< HEAD
     df['Mes'] = df['Data_Hora'].dt.month
     df['Dia'] = df['Data_Hora'].dt.day
 
     df_junho = df[df['Mes'] == 6]
 
-=======
-    # Extraindo o mês para agrupamento
-    df['Mes'] = df['Data_Hora'].dt.month
-    df['Dia'] = df['Data_Hora'].dt.day
-
-    # Filtrando apenas o mês 6 (junho)
-    df_junho = df[df['Mes'] == 6]
-
-    # Agrupando por dia e calculando a média diária para o mês de junho
->>>>>>> e1142c46a1c3bcc187c40051349bab7026db4c1a
     media_diaria_junho = df_junho.groupby(['Dia'])[colunas_orvalho].mean().reset_index()
 
     plt.figure(figsize=(12, 6))
 
-<<<<<<< HEAD
-    legend_labels = []
-    
-    plt.plot(media_diaria_junho['Dia'], media_diaria_junho['Pto Orvalho Ins. (C)'], color='#00FF00')
-    plt.plot(media_diaria_junho['Dia'], media_diaria_junho['Pto Orvalho Max. (C)'], color='orange')
-    plt.plot(media_diaria_junho['Dia'], media_diaria_junho['Pto Orvalho Min. (C)'], color='#4B0082')
+    plt.plot(media_diaria_junho['Dia'], media_diaria_junho['Pto Orvalho Ins. (C)'], color='skyblue', label='Ponto de Orvalho Ins.')
+    plt.plot(media_diaria_junho['Dia'], media_diaria_junho['Pto Orvalho Max. (C)'], color='orange', label='Ponto de Orvalho Max.')
+    plt.plot(media_diaria_junho['Dia'], media_diaria_junho['Pto Orvalho Min. (C)'], color='lightgreen', label='Ponto de Orvalho Min.')
 
-=======
-    # Variáveis para controlar a exibição única das legendas
-    legend_labels = []
-    
-    # Plotando os dados para o mês de junho
-    plt.plot(media_diaria_junho['Dia'], media_diaria_junho['Pto Orvalho Ins. (C)'], color='skyblue')
-    plt.plot(media_diaria_junho['Dia'], media_diaria_junho['Pto Orvalho Max. (C)'], color='orange')
-    plt.plot(media_diaria_junho['Dia'], media_diaria_junho['Pto Orvalho Min. (C)'], color='lightgreen')
-
-    # Adicionando os rótulos na legenda apenas uma vez
->>>>>>> e1142c46a1c3bcc187c40051349bab7026db4c1a
-    if 'Ponto de Orvalho Ins.' not in legend_labels:
-        legend_labels.append('Ponto de Orvalho Ins.')
-    if 'Ponto de Orvalho Max.' not in legend_labels:
-        legend_labels.append('Ponto de Orvalho Max.')
-    if 'Ponto de Orvalho Min.' not in legend_labels:
-        legend_labels.append('Ponto de Orvalho Min.')
-
-<<<<<<< HEAD
     plt.axhline(y=18, color='red', linestyle=':', label='Mínimo Ideal (18°C)')
     plt.axhline(y=20, color='green', linestyle='--', label='Máximo Ideal (20°C)')
-    plt.legend(legend_labels + ['Mínimo Ideal (18°C)', 'Máximo Ideal (20°C)'], loc='lower left')
-=======
-    # Linhas ideais
-    plt.axhline(y=20, color='red', linestyle=':', label='Mínimo Ideal (10°C)')
-    plt.axhline(y=18, color='green', linestyle='--', label='Máximo Ideal (16°C)')
 
-    # Custom Legend (exibindo cada rótulo apenas uma vez)
-    plt.legend(legend_labels + ['Mínimo Ideal (10°C)', 'Máximo Ideal (16°C)'], loc='lower right')
+    plt.legend(loc='lower left')
 
->>>>>>> e1142c46a1c3bcc187c40051349bab7026db4c1a
     plt.title('Ponto de Orvalho - Junho')
     plt.xlabel('Dia do mês')
     plt.ylabel('Ponto de Orvalho (°C)')
+    
     plt.grid(True)
-<<<<<<< HEAD
-    plt.xticks(range(1, 32))
-=======
-    plt.xticks(range(1, 32))  # Ticks para todos os dias do mês
->>>>>>> e1142c46a1c3bcc187c40051349bab7026db4c1a
+    plt.xticks(range(1, 32)) 
     plt.tight_layout()
+
     plt.show()
 
 def pressao(arqui):
-<<<<<<< HEAD
     df = pd.read_csv(arqui, sep=';', decimal=',', encoding='utf-8')
     df = df.replace(',', '.', regex=True)
 
@@ -410,58 +299,7 @@ def analisar_radiacao_e_energia(arquivo, area_painel, eficiencia):
 
 temperatura(caminho_csv)
 umidade(caminho_csv)
+pressao(caminho_csv)
 orvalho(caminho_csv)
-pressao(caminho_csv)
 vento(caminho_csv)
-analisar_radiacao_e_energia(caminho_csv, area_painel=20, eficiencia=80)
-=======
-    # Pressao Ins. (hPa);Pressao Max. (hPa);Pressao Min. (hPa)
-    df = pd.read_csv(arqui, sep=';', decimal=',', encoding='utf-8')
-    df = df.replace(',', '.', regex=True)
-
-    # Colunas do ponto de orvalho
-    colunas_pressao = ['Pressao Ins. (hPa)', 'Pressao Max. (hPa)', 'Pressao Min. (hPa)']
-
-    for col in colunas_pressao:
-        df[col] = pd.to_numeric(df[col], errors='coerce')
-    df['Data'] = df['Data'].astype(str)
-    df['Hora (UTC)'] = df['Hora (UTC)'].astype(str).str.zfill(4)
-    df['Data-Hora'] = pd.to_datetime(df['Data'] + ' ' + df['Hora (UTC)'], format='%d/%m/%Y %H%M', errors='coerce')
-
-    df['Mes'] = df['Data-Hora'].dt.month
-    df['Dia'] = df['Data-Hora'].dt.day
-
-    df_junho = df[df['Mes'] == 6]
-
-    media_diaria_junho = df_junho.groupby(['Dia'])[colunas_pressao].mean().reset_index()
-
-    plt.figure(figsize=(10, 6))
-
-    legend_labels = []
-
-    plt.plot(media_diaria_junho['Dia'], media_diaria_junho['Pressao Ins. (hPa)'], color='skyblue')
-    plt.plot(media_diaria_junho['Dia'], media_diaria_junho['Pressao Max. (hPa)'], color='orange')
-    plt.plot(media_diaria_junho['Dia'], media_diaria_junho['Pressao Min. (hPa)'], color='lightgreen')
-
-    if 'Pressao Ins.' not in legend_labels:
-        legend_labels.append('Pressao Ins.')
-    if 'Pressao Max.' not in legend_labels:
-        legend_labels.append('Pressao Max.')
-    if 'Pressao Min.' not in legend_labels:
-        legend_labels.append('Pressao Min.')    
-
-    # plt.axhline(y=10, color='red', linestyle=':', label='Minimo Ideal (10 (hPa))')
-    # plt.axhline(y=20, color='green', linestyle='--', label='Maximo Ideal (20 (hPa))')
-
-    plt.legend(legend_labels + ['Minimo Ideal (10 (hPa))', 'Maximo Ideal (20 (hPa))'], loc='upper right')
-
-    plt.title('Pressao registrada no mês de Junho')
-    plt.xlabel('Dia do mês')
-    plt.ylabel('Pressao em (hPa)')
-    plt.grid(True)
-    plt.xticks(range(1, 32))
-    plt.tight_layout()
-    plt.show()
-
-pressao(caminho_csv)
->>>>>>> e1142c46a1c3bcc187c40051349bab7026db4c1a
+analisar_radiacao_e_energia(caminho_csv, area_painel= 15, eficiencia=80)
