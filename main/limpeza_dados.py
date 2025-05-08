@@ -1,7 +1,7 @@
 import pandas as pd
 
 # abrir arquivo
-df = pd.read_csv(r'C:\Users\aluno noturno\Desktop\grupo03\Arquivo-trabalho\Documento-grupo03.csv', delimiter=';', encoding='UTF-8')
+df = pd.read_csv('Documento-grupo03.csv', delimiter=';', encoding='UTF-8')
 
 # verificar valores vazios
 valoresVazios = df.isnull().sum()
@@ -24,4 +24,4 @@ else:
 print(df.isnull().sum())
 
 # criar arquivo limpo
-df.to_csv(r'C:\Users\aluno noturno\Desktop\grupo03\Arquivo-trabalho\Documento-Limpo-grupo03.csv', index=False)
+df.to_csv('Documento-Limpo-grupo03.csv', sep=';', index=False)
